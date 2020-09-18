@@ -15,6 +15,7 @@ if (isset($_POST['username']) and isset($_POST['password'])){
     //3.1.2 If the posted values are equal to the database values, then session will be created for the user.
     if ($count == 1){
         
+        $_SESSION['user_id'] = $result->fetch_object()->id;
         $_SESSION['username'] = $username;
         
         if($result->fetch_object()->is_admin){
@@ -23,7 +24,7 @@ if (isset($_POST['username']) and isset($_POST['password'])){
         else{
             header("Location:user_dashboard.php"); //header to redirect, but doesnt work
         }
-        
+
         die;
         
     }
