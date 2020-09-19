@@ -19,8 +19,8 @@ if (isset($_POST['username']) and isset($_POST['password'])){
         $_SESSION['email'] = $email;
         $_SESSION['fullname'] = $user->firstname . " ". $user->lastname;
 
-        
-        if($result->fetch_object()->is_admin){
+
+        if($user->is_admin){
             header("Location:admin_dashboard.php"); //header to redirect
         }
         else{
