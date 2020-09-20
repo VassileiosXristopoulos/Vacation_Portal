@@ -6,7 +6,8 @@ require('connect.php');
 if (isset($_POST['username']) and isset($_POST['password'])){
     //3.1.1 Assigning posted values to variables.
     $email = $_POST['username'];
-    $password = $_POST['password'];
+    $password = crypt($_POST['password'], 'Hello-GFG');
+  
     //3.1.2 Checking the values are existing in the database or not
     $query = "SELECT * FROM `users` WHERE email='$email' and user_pass='$password'";
 
