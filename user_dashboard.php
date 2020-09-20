@@ -1,5 +1,6 @@
 <?php
 session_start();
+require('header.php');
 require('connect.php');
 require('functions.php');
 
@@ -32,8 +33,11 @@ $vacations = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     <?php } ?>
 </table>
+<?php // TODO: check for better way of writting path ?>
 <a href="/epignosis_portal/create_vacation.php" > Create new vacation </a>
 
 <?php
 mysqli_free_result($result);
+
+require('footer.php');
 
