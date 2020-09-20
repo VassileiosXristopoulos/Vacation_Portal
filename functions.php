@@ -1,19 +1,19 @@
 <?php
+//TODO: Document all functions
 function getDatesDifference($date1, $date2){
-    //  TODO: what if date1 > date2 ??
     $dateDiff = strtotime($date2)- strtotime($date1);
     return round($dateDiff / (60 * 60 * 24));
 }
-function getSupervisorEmail(){
+function getSupervisors(){
     require('connect.php');
-    $supervisor_email = "";
+    $supervisors = NULL;
 
     $query = "SELECT * FROM `users` WHERE is_admin='1'";
     $result = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
-    if(mysqli_num_rows($result) == 1 ){ // supervisor found
-        $supervisor_email = $result->fetch_object()->email;
+    if(mysqli_num_rows($result) > 0){
+        $supervisors =  mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
-    return $supervisor_email;
+    return $supervisors;
 }
 
 function getEmployeeEmail($user_id){
@@ -59,4 +59,64 @@ function getRequestById($request_id){
     }
 
     return $ret;
+}
+
+function getUserFromEmail($email){
+    require('connect.php');
+    $user = (object)array(
+        'firstname' => "",
+        'lastname' => "",
+        'email' => "",
+        'user_pass' => "",
+        'is_admin' =>""
+    );
+
+
+    $query = "SELECT * FROM `users` WHERE email='$email'";
+    $request = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+
+    if(mysqli_num_rows($request) == 1){
+        $user = $request->fetch_object();
+    }
+
+    return $user;
+}
+
+function getUserFromID($id){
+    require('connect.php');
+    $user = (object)array(
+        'firstname' => "",
+        'lastname' => "",
+        'email' => "",
+        'user_pass' => "",
+        'is_admin' =>""
+    );
+
+
+    $query = "SELECT * FROM `users` WHERE id='$id'";
+    $request = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+
+    if(mysqli_num_rows($request) == 1){
+        $user = $request->fetch_object();
+    }
+
+    return $user;
+}
+
+
+function emailUsed($email){
+    require('connect.php');
+
+    $query = "SELECT * FROM `users` WHERE email='$email'";
+    $result = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+    $count = mysqli_num_rows($result);
+    //3.1.2 If the posted values are equal to the database values, then session will be created for the user.
+    return $count == 1;
+}
+
+
+function passwordsEqual($password1, $password2){
+    $hashed_password = crypt($password1); // let the salt be automatically generated
+    
+    return hash_equals($hashed_password, crypt($password2, $hashed_password));
 }
