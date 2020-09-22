@@ -1,8 +1,21 @@
 <?php
 session_start();
+
+if(!isset($_SESSION['user_id'])) {
+    header("Location: /epignosis_portal/index.php");
+    exit();
+}
 require('header.php');
 require('connect.php');
 require('functions.php');
+
+if($_SESSION['is_admin']){
+    echo "Cannot acces page. The Create Vacation page is for Employees";
+    echo '</br> <a href="/epignosis_portal/admin_dashboard.php">Go to admin dashboard </a>';
+    require('footer.php');
+    die;
+}
+
 
 $user_id = $_SESSION['user_id'];
 $user_email  = $_SESSION['email'];
@@ -17,47 +30,62 @@ if ( isset($_POST['datefrom']) and isset($_POST['dateto']) ){
     // Check that dates given are valid
     if(! (strtotime($dateto)- strtotime($datefrom) > 0 &&
         strtotime($datefrom) - strtotime($todays_date) > 0) ){
-            die("Error: Invalid request dates!");
-    }
-    
-    $query = "INSERT INTO `vacations` (user_id, date_submitted, date_from, date_to, reason, status) 
-                VALUES ($user_id, DATE '$todays_date', DATE '$datefrom', DATE '$dateto', '$reason','pending')";
-
-    mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
-
-    $request_id = mysqli_insert_id($mysqli);
-    $supervisors = getSupervisors();
-    if($supervisors != NULL){
-        $text = createRequestText($fullname, $datefrom, $dateto, $reason , $request_id); 
-    
-        // send email to all supervisors. Whoever makes takes action first 
-        foreach($supervisors as $supervisor){
-            mail($supervisor['email'], "Vacation Request", $text, 'From: vpxristop@gmail.com');
-        }    
+            $error_msg = "Error: Invalid request dates!";
     }
     else{
-        die("Unexpected error: Admin account not found!");
+        $query = "INSERT INTO `vacations` (user_id, date_submitted, date_from, date_to, reason, status) 
+        VALUES ($user_id, DATE '$todays_date', DATE '$datefrom', DATE '$dateto', '$reason','pending')";
+
+        mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+
+        $request_id = mysqli_insert_id($mysqli);
+
+
+        /* Save to hashed vacations the hash id for identifying the vacation request */
+        $hash_id = unique_vacation_code();
+        $query = "INSERT INTO `hashed_vacations` (vacation_id, hash_id) 
+                VALUES ($request_id, '$hash_id')";
+        mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+
+
+        $supervisors = getSupervisors();
+        if($supervisors != NULL){
+            $text = createRequestText($fullname, $datefrom, $dateto, $reason , $hash_id); 
+
+            // send email to all supervisors. Whoever makes takes action first 
+            foreach($supervisors as $supervisor){
+                mail($supervisor['email'], "Vacation Request", $text, 'From: supervisor');
+            }    
+        }
+        else{
+            die("Unexpected error: Admin account not found!");
+        }
+
+
+        header("Location:user_dashboard.php"); //header to redirect
+        die;
     }
     
-
-    header("Location:user_dashboard.php"); //header to redirect
-    die;
 }
 ?>
 
 <div class="create-vacation-form">
-    <h1>Submit new Vacation Request</h1>
+    <h1>New Vacation Request</h1>
+    <div class="error-msg"> <?php echo isset($error_msg) ? $error_msg : ""  ?> </div>
     <form action="" method="POST">
-        <p><label>Date From (Y-m-d): </label>
+        <p><label>Date From (Y-m-d)</label>
         <input id="datefrom" type="text" name="datefrom" required /></p>
 
-        <p><label>Date To (Y-m-d) &nbsp;&nbsp; : </label>
+        <p><label>Date To (Y-m-d)</label>
         <input id="dateto" type="text" name="dateto" required/></p>
 
-        <p><label>Reason&nbsp;&nbsp; : </label>
+        <p><label>Reason</label>
         <input id="reason" type="text" name="reason"/></p>
 
-        <input class="btn" type="submit" name="submit" value="Submit" />
+        <div class="create-vacation-button">
+            <input class="btn" type="submit" name="submit" value="Submit" />
+        </div>
+        
     </form>
 </div>
 
