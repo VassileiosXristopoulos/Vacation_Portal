@@ -1,10 +1,12 @@
 In order to give a clean experience to any new user of the Portal, the initial database is choosed to be empty containing only a "dummy" Administrator with no email address where the user can log in with it's credentials and create a valid Administrator in order to be able to receive Vacation Requests via email. 
 
 Below are the steps in order to start using the application:
+1) Configure the database: The database configuration is setup as host="localhost", user="root", pass="" at the file "connect.php"
 
-1) Login with username:admin, password:admin . This is the default user in order to start using the application. 
+2) Login with username:admin, password:admin . This is the default user in order to start using the application. 
 NOTE: This user does not have a valid email, so a new Administrator user must be created from the portal. 
 
-2) Logout from the default user and log in with the Administrator you created. Now users can be created with your desired email addresses.
+3) Logout from the default user and log in with the Administrator you created. Now users can be created with your desired email addresses.
 
 The application can be used normally as described in the README file!
+
