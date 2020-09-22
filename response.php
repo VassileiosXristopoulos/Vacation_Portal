@@ -2,8 +2,14 @@
 require('connect.php');
 require('functions.php');
 
+
 $acctepted = $_GET['accepted'] == 'yes' ?  'accepted' : 'rejected';
 $request_id = $_GET['id'];
+
+$request_id = getVacationIdFromHash($_GET['id']);
+if($request_id == null){
+    die("Invalid vacation request!");
+}
 
 $query = "SELECT * FROM `vacations` WHERE id=$request_id";
 $request = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
@@ -18,6 +24,7 @@ if($vacation_request != NULL ){ // vacation reuqest found
         updateRequestStatus($request_id, $acctepted);
 
         mail($employee_email, "Vacation Response", $responseText, 'From: vpxristop@gmail.com');
+        echo "<script>window.close();</script>";
     }
     else{
         die("Vacation Request already answered! ");
