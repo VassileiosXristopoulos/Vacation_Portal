@@ -6,9 +6,13 @@ This application also has an admin mode, where the administrator can log in with
 
 
 Login page: index.php & login.php
+
 User dashboard: user_dashboard.php
+
 Create new vacation request: create_vacation.php
+
 Accept/Reject request: response.php
 
 Admin dashboard: admin_dashboard.php
+
 Create/Modify user: user.php
