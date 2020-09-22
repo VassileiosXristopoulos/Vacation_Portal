@@ -2,21 +2,22 @@
 require('connect.php');
 require('functions.php');
 
-
+// define the response text depending on the GET variables
 $acctepted = $_GET['accepted'] == 'yes' ?  'accepted' : 'rejected';
+// retrieve the vacation id (hashed) from the GET request
 $request_id = $_GET['id'];
 
+// retrieve the actual vacation id from the database
 $request_id = getVacationIdFromHash($_GET['id']);
 if($request_id == null){
     die("Invalid vacation request!");
 }
 
-$query = "SELECT * FROM `vacations` WHERE id=$request_id";
-$request = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
-
+// gets the vacation request from the database
 $vacation_request = getRequestById($request_id);
-if($vacation_request != NULL ){ // vacation reuqest found
+if($vacation_request != NULL ){ // vacation request found
     
+    // if status of request is pending, change it
     if($vacation_request->status == 'pending'){
         $date_submitted = $vacation_request->date_submitted;
         $employee_email = getEmployeeEmail($vacation_request->user_id);
@@ -26,7 +27,7 @@ if($vacation_request != NULL ){ // vacation reuqest found
         mail($employee_email, "Vacation Response", $responseText, 'From: vpxristop@gmail.com');
         echo "<script>window.close();</script>";
     }
-    else{
+    else{ // Do nothing for already answered requests
         die("Vacation Request already answered! ");
     }
     

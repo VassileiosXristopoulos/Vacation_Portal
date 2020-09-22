@@ -21,7 +21,6 @@ if(!$_SESSION['is_admin']){
 // retrieve all the users from the database in order to display them
 $query = "SELECT * FROM `users`";
 $result = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
-
 $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 // create the users' table and display them

@@ -1,5 +1,4 @@
 <?php
-//TODO: Document all functions
 
 /**
  * Given 2 dates at string format, computes and returns their difference in days
@@ -122,12 +121,6 @@ function emailUsed($email){
     return $count == 1;
 }
 
-
-function passwordsEqual($password1, $password2){
-    $hashed_password = crypt($password1); // let the salt be automatically generated
-    
-    return hash_equals($hashed_password, crypt($password2, $hashed_password));
-}
 /**
  * Returns a unique key for a vacation id
  */
@@ -165,7 +158,9 @@ function unique_user_code(){
     return $new_hashKey;
   }
 
-
+/**
+ * Gets a hashKey for a vacation request and return it's id   
+ */
 function getVacationIdFromHash($hash){
     require('connect.php');
 
@@ -177,11 +172,12 @@ function getVacationIdFromHash($hash){
     if(mysqli_num_rows($request) == 1){
         $id = $request->fetch_object()->vacation_id;
     }
-    // TODO: What if error occurs and we have more than 1 hash??
-
     return $id;
 }
 
+/**
+ * Gets a user id and returns it's hashkey
+ */
 function getUserIdFromHash($hash){
     require('connect.php');
 
@@ -198,7 +194,9 @@ function getUserIdFromHash($hash){
 }
 
 
-
+/**
+ * Gets a hashkey for a user and returns their id
+ */
 function getUserHashFromId($id){
     require('connect.php');
 

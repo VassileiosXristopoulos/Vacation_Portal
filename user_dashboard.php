@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+// check if a logged in user requested that page, if not redirect to home page
 if(!isset($_SESSION['user_id'])) {
     header("Location: /epignosis_portal/index.php");
     exit();
@@ -10,7 +10,7 @@ require('header.php');
 require('connect.php');
 require('functions.php');
 
-
+// check if the logged in user is employee. If not they should not see this page
 if($_SESSION['is_admin']){
     echo "Cannot acces page. The Create Vacation page is for Employees";
     echo '</br> <a href="/epignosis_portal/admin_dashboard.php">Go to admin dashboard </a>';
@@ -18,13 +18,13 @@ if($_SESSION['is_admin']){
     die;
 }
 
+//retrieve all the vacation requests a user has submitted
 $user_id = $_SESSION['user_id'];
 $query = "SELECT * FROM `vacations` WHERE user_id='$user_id'";
 $result = mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
 
 $vacations = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-//TODO: make table scrollable
+// display the vacation requests of the user
 ?>
  <table class="portal-table vacations-table">
  <thead>
@@ -50,7 +50,6 @@ $vacations = mysqli_fetch_all($result, MYSQLI_ASSOC);
     <?php } ?>
 </tbody>
 </table>
-<?php // TODO: check for better way of writting path ?>
 <a id="new_vacation" href="/epignosis_portal/create_vacation.php" > Create new vacation </a>
 
 <?php
