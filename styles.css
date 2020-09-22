@@ -3,4 +3,134 @@
     flex-direction: column;
     align-items: center;
     margin-top: 40px;
+    padding-top: 50px;
+}
+.users-table thead:hover{
+    cursor: auto;
+}
+.users-table tbody:hover{
+    cursor: pointer;
+}
+
+.portal-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.portal-table tr{
+    height: 40px;
+}
+.portal-table a,
+.portal-table a:hover{
+    color: black;
+    text-decoration: none;
+    border: none;
+}
+
+.portal-table thead tr {
+    background-color: #1abc9c;
+    color: #ffffff;
+    text-align: left;
+}
+
+.portal-table th,
+.portal-table td {
+    padding: 12px 15px;
+}
+
+.portal-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.portal-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.portal-table tbody tr:last-of-type {
+    border-bottom: 2px solid #1abc9c;
+}
+
+#mainhead{
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    text-align: center;
+    background: #1abc9c;
+    color: white;
+}
+#logout{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    justify-content: end;
+}
+#logout a{
+    color: black;
+}
+.header-container{
+    height: 100px;
+}
+.header-container .title{
+    text-align: left;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+#new_user,
+#new_vacation{
+    background-color: #1abc9c; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+}
+.create-user-form,
+.create-vacation-form{
+    width: 70%;
+}
+.create-user-form h1,
+.create-vacation-form h1{
+    padding-bottom: 20px;
+}
+.create-user-form p label,
+.create-vacation-form p label{
+    width: 50%;
+}
+.create-user-form p input,
+.create-vacation-form p input{
+    width: 30%;
+}
+#submit-btn,
+.create-vacation-button{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+}
+#submit-btn input,
+.create-vacation-button input{
+    font-size: 20px;
+}
+
+.register-form form{
+    padding-top: 10px;
+    
+}
+.register-form p{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.error-msg{
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    padding-bottom: 20px;
 }
