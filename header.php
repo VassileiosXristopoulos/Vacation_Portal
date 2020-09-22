@@ -1,4 +1,4 @@
-
+<?php require('constants.php'); ?>
 <head>
 <link rel="stylesheet" href="styles.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -12,9 +12,9 @@
             <div id="logout" class="col-sm-3">
                 <?php 
                 $url = $_SERVER['REQUEST_URI'];
-                if($url != "/epignosis_portal/index.php" &&
-                    $url != "/epignosis_portal/" ){?>
-                    <a href="/epignosis_portal/logout.php">Logout</a>
+                if($url != "/".$currentDir."/index.php" &&
+                    $url != "/".$currentDir."/" ){?>
+                    <a href="/<?php echo $currentDir ?>/logout.php">Logout</a>
                 <?php }?>
         </div>
     </div>

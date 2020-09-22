@@ -42,10 +42,11 @@ function getEmployeeEmail($user_id){
  * Creates the text that will be included in the email for vacation request
  */
 function createRequestText($fullname, $datefrom, $dateto, $reason , $request_id){
+    require('constants.php');
     return "Dear supervisor, employee ". $fullname. " requested some time off starting on ". $datefrom . " and ending on ". $dateto . ", stating the reason:" .$reason .
     ". Click on one of the bellow links to approve or reject the application
-    http://localhost/epignosis_portal/response.php?id=" . $request_id . "&accepted=yes
-    http://localhost/epignosis_portal/response.php?id=". $request_id . "&accepted=no";      
+    http://localhost/".$currentDir."/response.php?id=" . $request_id . "&accepted=yes
+    http://localhost/".$currentDir."/response.php?id=". $request_id . "&accepted=no";      
 }
 
 /**

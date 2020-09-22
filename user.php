@@ -1,19 +1,21 @@
 <?php
 session_start();
-// check if a logged in user requested that page, if not redirect to home page
-if(!isset($_SESSION['user_id'])) {
-    header("Location: /epignosis_portal/index.php");
-    exit();
-}
 
-
+require('constants.php');
 require('header.php');
 require('connect.php');
 require('functions.php');
+
+// check if a logged in user requested that page, if not redirect to home page
+if(!isset($_SESSION['user_id'])) {
+    header("Location: /".$currentDir."/index.php");
+    exit();
+}
+
 // check if the logged in user is administrator. If not they should not see this page
 if(!$_SESSION['is_admin']){
     echo "Cannot acces page. The Create Vacation page is for Admins";
-    echo '</br> <a href="/epignosis_portal/user_dashboard.php">Go to user dashboard </a>';
+    echo '</br> <a href="/'.$currentDir.'/user_dashboard.php">Go to user dashboard </a>';
     require('footer.php');
     die;
 }

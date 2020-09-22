@@ -1,6 +1,6 @@
 <?php  //Start the Session
 session_start();
-
+require('constants.php');
 require('connect.php');
 
 //If the form is submitted

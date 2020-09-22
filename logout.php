@@ -2,4 +2,5 @@
 session_start();
 session_unset();
 session_destroy();
-header("Location: /epignosis_portal/index.php");
+require('constants.php');
+header("Location: /".$currentDir."/index.php");

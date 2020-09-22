@@ -1,19 +1,21 @@
 <?php
 session_start();
-// check if a logged in user requested that page, if not redirect to home page
-if(!isset($_SESSION['user_id'])) {
-    header("Location: /epignosis_portal/index.php");
-    exit();
-}
 
+require('constants.php');
 require('header.php');
 require('connect.php');
 require('functions.php');
 
+// check if a logged in user requested that page, if not redirect to home page
+if(!isset($_SESSION['user_id'])) {
+    header("Location: /".$currentDir."/index.php");
+    exit();
+}
+
 // check if the logged in user is employee. If not they should not see this page
 if($_SESSION['is_admin']){
     echo "Cannot acces page. The Create Vacation page is for Employees";
-    echo '</br> <a href="/epignosis_portal/admin_dashboard.php">Go to admin dashboard </a>';
+    echo '</br> <a href="/'.$currentDir.'/admin_dashboard.php">Go to admin dashboard </a>';
     require('footer.php');
     die;
 }
@@ -50,7 +52,7 @@ $vacations = mysqli_fetch_all($result, MYSQLI_ASSOC);
     <?php } ?>
 </tbody>
 </table>
-<a id="new_vacation" href="/epignosis_portal/create_vacation.php" > Create new vacation </a>
+<a id="new_vacation" href="/<?php echo $currentDir ?>/create_vacation.php" > Create new vacation </a>
 
 <?php
 mysqli_free_result($result);
