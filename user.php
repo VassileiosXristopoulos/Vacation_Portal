@@ -1,10 +1,27 @@
 <?php
+session_start();
+if(!isset($_SESSION['user_id'])) {
+    header("Location: /epignosis_portal/index.php");
+    exit();
+}
+
+
 require('header.php');
 require('connect.php');
 require('functions.php');
 
-$user = getUserFromID($_GET['user']);
-$isNewUser = $user->email =="";
+if(!$_SESSION['is_admin']){
+    echo "Cannot acces page. The Create Vacation page is for Admins";
+    echo '</br> <a href="/epignosis_portal/user_dashboard.php">Go to user dashboard </a>';
+    require('footer.php');
+    die;
+}
+
+
+$user = isset($_GET['user']) ? getUserIdFromHash($_GET['user']) : null; 
+
+$user = getUserFromID($user);
+$isNewUser = $user->email ==""; // email cannot be blank at registered user
 
 if ( isset($_POST['firstname']) and isset($_POST['lastname']) and isset($_POST['email'])
  and isset($_POST['password']) and isset($_POST['confirm_password']) ){
@@ -12,29 +29,42 @@ if ( isset($_POST['firstname']) and isset($_POST['lastname']) and isset($_POST['
 
     $password = crypt($_POST['password'], 'Hello-GFG');
     $confirm_password  = crypt($_POST['confirm_password'], 'Hello-GFG');
-    if(!hash_equals($password, $confirm_password)){
-        die("Passwords do not match!");
-    }
-    if(!$isNewUser && !hash_equals($password, $user->user_pass)){
-        die("Wrong password!");
-    }
-    
 
-    if(emailUsed($_POST['email'])){
-        $query = "UPDATE `users`
-        SET firstname='$_POST[firstname]', lastname='$_POST[lastname]', email='$_POST[email]',
-        user_pass='$password'
-        where id = $user->id";
+    if($isNewUser && emailUsed($_POST['email'])){
+        $error_msg = "This email is already used by another user!";
+    }
+    else if(!hash_equals($password, $confirm_password)){
+        $error_msg =  "Passwords do not match!";
+    }
+    else if(!$isNewUser && !hash_equals($password, $user->user_pass)){
+        $error_msg = "Wrong password!" ;
     }
     else{
-        $query = "INSERT INTO `users` (firstname, lastname, email, user_pass, is_admin) 
-        VALUES ('$_POST[firstname]', '$_POST[lastname]', '$_POST[email]', '$password', '$_POST[user_type]')";            
-    }      
-    // update or create user!
-    mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+        if(!$isNewUser){
+            $query = "UPDATE `users`
+            SET firstname='$_POST[firstname]', lastname='$_POST[lastname]', email='$_POST[email]',
+            user_pass='$password'
+            where id = $user->id";
+            mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+        }
+        else{
+            $query = "INSERT INTO `users` (firstname, lastname, email, user_pass, is_admin) 
+            VALUES ('$_POST[firstname]', '$_POST[lastname]', '$_POST[email]', '$password', '$_POST[user_type]')";            
+            mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+            
+            $user_id = mysqli_insert_id($mysqli);
 
-    header("Location:admin_dashboard.php"); //header to redirect
-    die;
+             /* Save to hashed users the hash id for identifying the user id */
+            $hash_id = unique_user_code();
+            $query = "INSERT INTO `hashed_users` (user_id, hashed_id) 
+                    VALUES ($user_id, '$hash_id')";
+            mysqli_query($mysqli, $query) or die(mysqli_error($mysqli));
+        }      
+            
+        header("Location:admin_dashboard.php"); //header to redirect
+        die;
+    }
+    
 }
 ?>
 
@@ -42,28 +72,32 @@ if ( isset($_POST['firstname']) and isset($_POST['lastname']) and isset($_POST['
     <h1>
         <?php echo $isNewUser ? "Create new user" : "Edit User"  ?>
     </h1>
+    <div class="error-msg"> <?php echo isset($error_msg) ? $error_msg : ""  ?> </div>
     <form action="" method="POST">
         <p><label>First Name</label>
-        <input id="firstname" type="text" name="firstname" required  value="<?php echo $user->firstname; ?>"/></p>
+        <input id="firstname" type="text" name="firstname" required  value="<?php echo isset($_POST['firstname'])? $_POST['firstname'] : $user->firstname; ?>"/></p>
 
-        <p><label>Last Name&nbsp;&nbsp; : </label>
-        <input id="lastname" type="text" name="lastname" required  value="<?php echo $user->lastname ?>" /></p>
+        <p><label>Last Name</label>
+        <input id="lastname" type="text" name="lastname" required  value="<?php echo isset($_POST['lastname'])? $_POST['lastname'] : $user->lastname ?>" /></p>
 
-        <p><label>Email&nbsp;&nbsp; : </label>
-        <input id="email" type="text" name="email" required value="<?php echo $user->email ?>" /></p>
+        <p><label>Email</label>
+        <input id="email" type="text" name="email" required value="<?php echo isset($_POST['email'])? $_POST['email'] :  $user->email ?>" /></p>
 
-        <p><label>Password&nbsp;&nbsp; : </label>
+        <p><label>Password</label>
         <input id="password" type="password" name="password" required/></p>
 
-        <p><label> Confirm Password&nbsp;&nbsp; : </label>
+        <p><label> Confirm Password</label>
         <input id="confirm_password" type="password" name="confirm_password" required /></p>
 
-        <p><label> User type&nbsp;&nbsp; : </label>
+        <p><label> User type </label>
         <select name="user_type" id="user_type">
             <option value="0" <?php echo $user->is_admin ? "" : "selected"; ?>>Employee</option>
             <option value="1"<?php echo $user->is_admin ? "selected" : ""; ?>>Admin</option>
         </select> 
-        <input class="btn" type="submit" name="submit" value="Submit" />
+        </p>
+        <div id="submit-btn">
+            <input class="btn" type="submit" name="submit" value="Submit" />
+        </div>
     </form>
 </div>
 
